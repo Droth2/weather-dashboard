@@ -1,5 +1,6 @@
 var submitFormEl = document.getElementById('city-form');
 var currentWeatherEl = document.getElementById('current-weather');
+var forcastContainerEl = document.getElementById('forcast');
 
 var getWeather = function() {
     var weatherUrl = "https://api.openweathermap.org/data/2.5/onecall?lat=38.5816&lon=-121.4944&units=imperial&exclude=minutely,hourly&appid=10074fa01ce60102513489d0299d91f1";
@@ -7,6 +8,7 @@ var getWeather = function() {
         response.json().then(function(data) {
             console.log(data);
             formatCurrentWeather(data);
+            format5DayForcast(data);
         });
     });
 };
@@ -58,6 +60,40 @@ var formatCurrentWeather = function(data) {
     uvIndex.appendChild(uvIndexSpan);
     
     currentWeatherEl.append(heading, temp, wind, humidity, uvIndex);
+}
+
+var format5DayForcast = function(data) {
+    reset(forcastContainerEl);
+    for (var i = 1; i < data.daily.length; i++) {
+        if (i < 6) {
+            var timeDateStamp = data.daily[i].dt;
+            var timeMili = timeDateStamp * 1000;
+            var dateObject = new Date(timeMili);
+            var dated = dateObject.toLocaleString('en-US', {day: "numeric"});
+            var datem = dateObject.toLocaleString('en-US', {month: "numeric"});
+            var datey = dateObject.toLocaleString('en-US', {year: "numeric"});
+
+            var mainDiv = document.createElement('div');
+            mainDiv.classList = 'col-md-2';
+            var card = document.createElement('div');
+            card.classList = 'card forcast-card';
+            var cardBody = document.createElement('div');
+            cardBody.classList = 'card-body';
+
+            var cardTitle = document.createElement('h5');
+            cardTitle.classList = 'card-title mb-2';
+            cardTitle.textContent = datem + '/' + dated + '/' + datey;
+
+            var cardText = document.createElement('p');
+            cardText.classList = 'card-text';
+            cardText.innerHTML = "<img src='http://openweathermap.org/img/wn/" + data.daily[i].weather[0].icon + "@2x.png'><br><br>Temp: " + data.daily[i].temp.day + "°F<br><br>Wind: " + data.daily[i].wind_speed + " MPH<br><br>Humidity: " + data.daily[i].humidity + "%";
+
+            cardBody.append(cardTitle, cardText);
+            card.appendChild(cardBody);
+            mainDiv.appendChild(card);
+            forcastContainerEl.appendChild(mainDiv);
+        }
+    }
 }
 
 var reset = function(parent) {
