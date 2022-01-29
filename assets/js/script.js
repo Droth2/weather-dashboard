@@ -19,6 +19,7 @@ var formSubmitHandler = function(event) {
 submitFormEl.addEventListener('submit', formSubmitHandler);
 
 var formatCurrentWeather = function(data) {
+    reset(currentWeatherEl);
     var timeDateStamp = data.current.dt;
     var timeMili = timeDateStamp * 1000;
     var dateObject = new Date(timeMili);
@@ -57,4 +58,10 @@ var formatCurrentWeather = function(data) {
     uvIndex.appendChild(uvIndexSpan);
     
     currentWeatherEl.append(heading, temp, wind, humidity, uvIndex);
+}
+
+var reset = function(parent) {
+    while (parent.firstChild) {
+        parent.removeChild(parent.firstChild);
+    }
 }
