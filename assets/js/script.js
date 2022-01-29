@@ -1,13 +1,14 @@
 var submitFormEl = document.getElementById('city-form');
 var currentWeatherEl = document.getElementById('current-weather');
 var forcastContainerEl = document.getElementById('forcast');
+var cityInputEl = document.getElementById('city');
 
-var getWeather = function() {
-    var weatherUrl = "https://api.openweathermap.org/data/2.5/onecall?lat=38.5816&lon=-121.4944&units=imperial&exclude=minutely,hourly&appid=10074fa01ce60102513489d0299d91f1";
+var getWeather = function(lat, long, city) {
+    var weatherUrl = "https://api.openweathermap.org/data/2.5/onecall?lat=" + lat + "&lon=" + long + "&units=imperial&exclude=minutely,hourly&appid=10074fa01ce60102513489d0299d91f1";
     fetch(weatherUrl).then(function(response) {   
         response.json().then(function(data) {
             console.log(data);
-            formatCurrentWeather(data);
+            formatCurrentWeather(data, city);
             format5DayForcast(data);
         });
     });
@@ -15,12 +16,28 @@ var getWeather = function() {
 
 var formSubmitHandler = function(event) {
     event.preventDefault();
-    getWeather();
-}
+    var cityName = cityInputEl.value.trim().split(' ').join('');
+    if (cityName) {
+        var apiUrl = "https://api.myptv.com/geocoding/v1/locations/by-text?searchText=" + cityName + "&countryFilter=US&apiKey=YjYzY2QyNTY5NzhjNDJlODhiYTc3YWY2MmEyZTU0NGU6ZTc4MTVkNTEtNTRkMC00ZWJmLWIxOTgtYzZlMjYxNDFjZGQ5";
+        console.log(cityName);
+        fetch(apiUrl).then(function(response) {
+            response.json().then(function(data) {
+                console.log(data);
+                var lat = data.locations[0].referencePosition.latitude;
+                var long = data.locations[0].referencePosition.longitude;
+                var city = data.locations[0].formattedAddress.split(',')[0];
+                getWeather(lat, long, city);
+            });
+        });
+        cityInputEl.value = '';
+    } else {
+        alert('Please enter a valid city in US');
+    };
+};
 
 submitFormEl.addEventListener('submit', formSubmitHandler);
 
-var formatCurrentWeather = function(data) {
+var formatCurrentWeather = function(data, city) {
     reset(currentWeatherEl);
     var timeDateStamp = data.current.dt;
     var timeMili = timeDateStamp * 1000;
@@ -31,7 +48,7 @@ var formatCurrentWeather = function(data) {
 
     var heading = document.createElement('h3');
     heading.classList = 'px-2';
-    heading.innerHTML = "Sacramento (" + datem + "/" + dated + "/" + datey + ") <img src='http://openweathermap.org/img/wn/" + data.current.weather[0].icon + "@2x.png'>";
+    heading.innerHTML = city + " (" + datem + "/" + dated + "/" + datey + ") <img src='http://openweathermap.org/img/wn/" + data.current.weather[0].icon + "@2x.png'>";
 
     var temp = document.createElement('p');
     temp.classList = 'px-2';

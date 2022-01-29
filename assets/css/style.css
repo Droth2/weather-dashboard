@@ -10,7 +10,7 @@
 .saved-city {
     background: lightgray;
     transform: translateY(0px);
-    /* transition: transform 0.5s ease-in-out; */
+    transition: all 0.5s ease-in-out;
 }
 
 .btn-background {
