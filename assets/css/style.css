@@ -1,0 +1,54 @@
+
+
+.hero {
+  text-align: center;  
+  background-color: rgb(2,0,36);
+  background-image: linear-gradient(90deg, #020024 7%, #2222c9 59%, #2521ca 98%);
+  color: white;
+}
+
+.saved-city {
+    background: lightgray;
+    transform: translateY(0px);
+    /* transition: transform 0.5s ease-in-out; */
+}
+
+.btn-background {
+    background-color: rgb(2,0,36);
+    background-image: linear-gradient(90deg, #020024 7%, #2222c9 59%, #2521ca 98%);
+    transition: all .5s ease-in-out;
+    background-size: 1px 100px;
+}
+
+.btn-background:hover {
+    background: lightgray;
+    color: black;
+}
+
+.saved-city:hover {
+    transform: translateY(-5px);
+}
+
+.saved-city:active {
+    transform: translateY(5px);
+}
+
+.forcast-card {
+    background: #0450B0;
+    color: white;
+}
+
+.uv-index-favorable {
+    background-color: green;
+    color: white;
+}
+
+.uv-index-moderate {
+    background-color: yellow;
+    color: black;
+}
+
+.uv-index-severe {
+    background-color: red;
+    color: white;
+}
