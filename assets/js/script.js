@@ -2,6 +2,7 @@ var submitFormEl = document.getElementById('city-form');
 var currentWeatherEl = document.getElementById('current-weather');
 var forcastContainerEl = document.getElementById('forcast');
 var cityInputEl = document.getElementById('city');
+var savedCitysEl = document.getElementById('saved-city');
 
 var getWeather = function(lat, long, city) {
     var weatherUrl = "https://api.openweathermap.org/data/2.5/onecall?lat=" + lat + "&lon=" + long + "&units=imperial&exclude=minutely,hourly&appid=10074fa01ce60102513489d0299d91f1";
@@ -15,8 +16,15 @@ var getWeather = function(lat, long, city) {
 };
 
 var formSubmitHandler = function(event) {
-    event.preventDefault();
+    var city = cityInputEl.value;
+    createCityEl(city);
     var cityName = cityInputEl.value.trim().split(' ').join('');
+    event.preventDefault();
+    getLatLong(cityName);
+    cityInputEl.value = '';
+};
+
+var getLatLong = function(cityName) {
     if (cityName) {
         var apiUrl = "https://api.myptv.com/geocoding/v1/locations/by-text?searchText=" + cityName + "&countryFilter=US&apiKey=YjYzY2QyNTY5NzhjNDJlODhiYTc3YWY2MmEyZTU0NGU6ZTc4MTVkNTEtNTRkMC00ZWJmLWIxOTgtYzZlMjYxNDFjZGQ5";
         console.log(cityName);
@@ -29,13 +37,34 @@ var formSubmitHandler = function(event) {
                 getWeather(lat, long, city);
             });
         });
-        cityInputEl.value = '';
     } else {
         alert('Please enter a valid city in US');
     };
-};
+}
 
+var savedCityDirector = function(event) {
+    var cityName = event.target.textContent.split(' ').join('');
+    getLatLong(cityName);
+}
+
+savedCitysEl.addEventListener('click', savedCityDirector);
 submitFormEl.addEventListener('submit', formSubmitHandler);
+
+var createCityEl = function(city) {
+    var existingCity = savedCitysEl.querySelectorAll("div[data-city='"+ city + "']");
+    if (existingCity.length === 0) {
+        var div = document.createElement('div')
+        div.classList = 'saved-city text-center mb-3 rounded';
+        div.setAttribute('id', city.split(' ').join(''));
+        var text = document.createElement('h4');
+        text.classList = 'fw-light';
+        text.textContent = city;
+        div.appendChild(text);
+        savedCitysEl.appendChild(div);
+    } else {
+        console.log('hello');
+    }
+}
 
 var formatCurrentWeather = function(data, city) {
     reset(currentWeatherEl);
