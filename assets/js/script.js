@@ -3,6 +3,7 @@ var currentWeatherEl = document.getElementById('current-weather');
 var forcastContainerEl = document.getElementById('forcast');
 var cityInputEl = document.getElementById('city');
 var savedCitysEl = document.getElementById('saved-city');
+var citys = [];
 
 var getWeather = function(lat, long, city) {
     var weatherUrl = "https://api.openweathermap.org/data/2.5/onecall?lat=" + lat + "&lon=" + long + "&units=imperial&exclude=minutely,hourly&appid=10074fa01ce60102513489d0299d91f1";
@@ -53,16 +54,16 @@ submitFormEl.addEventListener('submit', formSubmitHandler);
 var createCityEl = function(city) {
     var existingCity = savedCitysEl.querySelectorAll("div[data-city='"+ city + "']");
     if (existingCity.length === 0) {
+        citys.push(city);
+        saveCity();
         var div = document.createElement('div')
         div.classList = 'saved-city text-center mb-3 rounded';
-        div.setAttribute('id', city.split(' ').join(''));
+        div.setAttribute('data-city', city.split(' ').join(''));
         var text = document.createElement('h4');
         text.classList = 'fw-light';
         text.textContent = city;
         div.appendChild(text);
         savedCitysEl.appendChild(div);
-    } else {
-        console.log('hello');
     }
 }
 
@@ -147,3 +148,28 @@ var reset = function(parent) {
         parent.removeChild(parent.firstChild);
     }
 }
+
+var saveCity = function() {
+    localStorage.setItem('citys', JSON.stringify(citys));
+}
+
+var loadCitys = function() {
+    var cities = JSON.parse(localStorage.getItem('citys'));
+    if (cities === null) {
+        console.log('no saved cities');
+    } else {
+        for (var i = 0; i < cities.length; i++) {
+            citys.push(cities[i]);
+            var div = document.createElement('div')
+            div.classList = 'saved-city text-center mb-3 rounded';
+            div.setAttribute('data-city', cities[i].split(' ').join(''));
+            var text = document.createElement('h4');
+            text.classList = 'fw-light';
+            text.textContent = cities[i];
+            div.appendChild(text);
+            savedCitysEl.appendChild(div);
+        }
+    }
+}
+
+loadCitys();
