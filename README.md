@@ -9,6 +9,9 @@ A website that will pupolate with current and future weather given a US city
 * Bootstrap
 * JavaScript
 
+## First Look
+<img src='./assets/images/firstlook.png' width='400' height='400'>
+
 ## Website
 https://droth2.github.io/weather-dashboard/
 
